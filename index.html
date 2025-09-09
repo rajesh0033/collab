@@ -3,215 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Electricity Bill Payment Dashboard</title>
+  <title>View Customer Payment Details</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f1f5f9;
       margin: 0;
-      padding: 0;
+      padding: 2rem;
     }
 
     header {
       background-color: #1d3557;
       color: white;
-      padding: 1.5rem;
+      padding: 1rem;
       text-align: center;
+      border-radius: 8px;
+      margin-bottom: 2rem;
     }
 
-    .container {
-      max-width: 700px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
+    h1 {
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #333;
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
     }
 
-    label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-      color: #222;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 0.7rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-      background-color: #fff;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.8rem;
+    th {
       background-color: #457b9d;
       color: white;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #1d3557;
-    }
-
-    .bill-summary {
-      margin-top: 2rem;
-      background-color: #f0f0f0;
-      padding: 1.5rem;
-      border-radius: 10px;
-      display: none;
-    }
-
-    .bill-summary h3 {
-      margin-top: 0;
-      color: #2a2a2a;
-    }
-
-    .bill-summary p {
-      margin: 0.3rem 0;
-    }
-
-    .payment-success {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: #d4edda;
-      color: #155724;
-      border-radius: 8px;
-      display: none;
-      text-align: center;
       font-weight: 600;
+    }
+
+    tr:hover {
+      background-color: #f0f8ff;
+    }
+
+    .no-data {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #666;
     }
 
     footer {
       text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: #666;
       margin-top: 3rem;
+      color: #666;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Electricity Bill Payment Dashboard</h1>
-    <p>Select your bill amount and payment method to proceed</p>
+    <h1>Customer Payment Details</h1>
   </header>
 
-  <div class="container">
-    <h2>Customer Details</h2>
-    <form id="paymentForm">
-      <label for="name">Full Name:</label>
-      <input type="text" id="name" required placeholder="Your full name" />
+  <main>
+    <table id="customerTable">
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Meter Number</th>
+          <th>Bill Amount ($)</th>
+          <th>Payment Method</th>
+          <th>Payment Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows added dynamically -->
+      </tbody>
+    </table>
 
-      <label for="meter">Meter Number:</label>
-      <input type="text" id="meter" required placeholder="Your meter number" />
-
-      <label for="billAmount">Select Bill Amount:</label>
-      <select id="billAmount" required>
-        <option value="" disabled selected>-- Choose amount --</option>
-        <option value="25">$25 - Basic Plan</option>
-        <option value="50">$50 - Standard Plan</option>
-        <option value="75">$75 - Premium Plan</option>
-        <option value="100">$100 - Ultimate Plan</option>
-      </select>
-
-      <label for="paymentMethod">Payment Method:</label>
-      <select id="paymentMethod" required>
-        <option value="" disabled selected>-- Select payment method --</option>
-        <option value="credit">Credit Card</option>
-        <option value="paypal">PayPal</option>
-        <option value="bank">Bank Transfer</option>
-      </select>
-
-      <button type="submit">Pay Bill</button>
-    </form>
-
-    <div class="bill-summary" id="billSummary">
-      <h3>Payment Summary</h3>
-      <p><strong>Name:</strong> <span id="summaryName"></span></p>
-      <p><strong>Meter Number:</strong> <span id="summaryMeter"></span></p>
-      <p><strong>Bill Amount:</strong> $<span id="summaryAmount"></span></p>
-      <p><strong>Payment Method:</strong> <span id="summaryPayment"></span></p>
-    </div>
-
-    <div class="payment-success" id="paymentSuccess">
-      Payment successful! Thank you for your payment.
-    </div>
-  </div>
+    <p class="no-data" id="noDataMsg" style="display:none;">No payment records found.</p>
+  </main>
 
   <footer>
-    &copy; 2025 Electricity Billing System. All rights reserved.
+    &copy; 2025 Electricity Billing System
   </footer>
 
   <script>
-    const form = document.getElementById("paymentForm");
-    const billSummary = document.getElementById("billSummary");
-    const paymentSuccess = document.getElementById("paymentSuccess");
+    const customerTableBody = document.querySelector("#customerTable tbody");
+    const noDataMsg = document.getElementById("noDataMsg");
 
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
+    // Load payments from localStorage
+    const payments = JSON.parse(localStorage.getItem("electricityPayments")) || [];
 
-      // Get form values
-      const name = document.getElementById("name").value.trim();
-      const meter = document.getElementById("meter").value.trim();
-      const billAmount = document.getElementById("billAmount").value;
-      const paymentMethod = document.getElementById("paymentMethod").value;
+    if (payments.length === 0) {
+      noDataMsg.style.display = "block";
+    } else {
+      payments.forEach(payment => {
+        const tr = document.createElement("tr");
 
-      if (!name || !meter || !billAmount || !paymentMethod) {
-        alert("Please fill out all fields.");
-        return;
-      }
+        tr.innerHTML = `
+          <td>${payment.name}</td>
+          <td>${payment.meter}</td>
+          <td>${parseFloat(payment.amount).toFixed(2)}</td>
+          <td>${payment.paymentMethod}</td>
+          <td>${new Date(payment.date).toLocaleString()}</td>
+        `;
 
-      // Update summary fields
-      document.getElementById("summaryName").textContent = name;
-      document.getElementById("summaryMeter").textContent = meter;
-      document.getElementById("summaryAmount").textContent = parseFloat(billAmount).toFixed(2);
-
-      let paymentText = "";
-      switch(paymentMethod) {
-        case "credit":
-          paymentText = "Credit Card";
-          break;
-        case "paypal":
-          paymentText = "PayPal";
-          break;
-        case "bank":
-          paymentText = "Bank Transfer";
-          break;
-      }
-      document.getElementById("summaryPayment").textContent = paymentText;
-
-      // Show summary and hide success initially
-      billSummary.style.display = "block";
-      paymentSuccess.style.display = "none";
-
-      // Simulate payment processing delay
-      setTimeout(() => {
-        paymentSuccess.style.display = "block";
-      }, 1500);
-
-      // Optionally, reset the form after payment success
-      form.reset();
-    });
+        customerTableBody.appendChild(tr);
+      });
+    }
   </script>
-
 </body>
 </html>
