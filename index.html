@@ -3,339 +3,388 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Electricity Bill Dashboard</title>
+  <title>Coffee Shop Dashboard</title>
   <style>
+    /* Reset and base */
     * {
       box-sizing: border-box;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f1f5f9;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
+      background: #f5f3f0;
+      color: #3e3e3e;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     header {
-      background-color: #1d3557;
+      background: #6f4e37;
       color: white;
-      padding: 1.5rem;
       text-align: center;
+      padding: 1.5rem;
       user-select: none;
     }
-    h1 {
+    header h1 {
       margin: 0;
+      font-weight: 700;
+      font-size: 2rem;
     }
     nav {
       display: flex;
-      justify-content: center;
-      background-color: #457b9d;
+      background: #a67c52;
+      user-select: none;
     }
     nav button {
       flex: 1;
-      padding: 1rem;
-      background: #457b9d;
+      background: #a67c52;
       border: none;
+      padding: 1rem;
+      font-size: 1.1rem;
       color: white;
-      font-size: 1rem;
       cursor: pointer;
       transition: background-color 0.3s ease;
       font-weight: 600;
     }
     nav button:hover {
-      background-color: #1d3557;
+      background: #6f4e37;
     }
     nav button.active {
-      background-color: #1d3557;
+      background: #4b3521;
     }
     main {
-      max-width: 700px;
+      max-width: 900px;
       margin: 2rem auto;
       background: white;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      flex-grow: 1;
     }
+    /* Coffee Menu */
+    .coffee-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 1.5rem;
+    }
+    .coffee-card {
+      background: #fef9f4;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .coffee-card img {
+      max-width: 120px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+    .coffee-card h3 {
+      margin: 0.3rem 0;
+      font-weight: 700;
+      color: #4b3521;
+    }
+    .coffee-card p {
+      margin: 0.3rem 0 0.7rem;
+      font-size: 0.9rem;
+      color: #6f4e37;
+    }
+    .coffee-card .price {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #855e42;
+    }
+    /* Order Form */
     form label {
       display: block;
-      margin-bottom: 0.4rem;
+      margin: 0.7rem 0 0.3rem;
       font-weight: 600;
-      color: #222;
     }
-    form input, form select {
+    form input[type="text"],
+    form input[type="email"],
+    form select,
+    form input[type="number"] {
       width: 100%;
-      padding: 0.7rem;
-      margin-bottom: 1rem;
+      padding: 0.6rem;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1rem;
-      background-color: #fff;
+    }
+    form input[type="number"] {
+      max-width: 80px;
     }
     form button {
+      margin-top: 1.5rem;
       width: 100%;
       padding: 0.8rem;
-      background-color: #457b9d;
-      color: white;
       font-size: 1.1rem;
+      background-color: #6f4e37;
+      color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: 700;
       transition: background-color 0.3s ease;
     }
     form button:hover {
-      background-color: #1d3557;
+      background-color: #4b3521;
     }
-    .bill-summary, .payment-success {
+    .summary, .success-message {
       margin-top: 2rem;
-      padding: 1.5rem;
+      padding: 1.3rem;
       border-radius: 10px;
       display: none;
     }
-    .bill-summary {
-      background-color: #f0f0f0;
+    .summary {
+      background: #f0ead8;
+      color: #4b3521;
     }
-    .bill-summary h3 {
+    .summary h3 {
       margin-top: 0;
-      color: #2a2a2a;
     }
-    .bill-summary p {
-      margin: 0.3rem 0;
-    }
-    .payment-success {
-      background-color: #d4edda;
+    .success-message {
+      background: #d4edda;
       color: #155724;
-      font-weight: 600;
+      font-weight: 700;
       text-align: center;
     }
-    /* Customer table styles */
-    #customerTable {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      background-color: white;
-    }
-    #customerTable th, #customerTable td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    #customerTable th {
-      background-color: #457b9d;
-      color: white;
-      font-weight: 600;
-    }
-    #customerTable tr:hover {
-      background-color: #f0f8ff;
-    }
-    .no-data {
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 1.2rem;
-      color: #666;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 3rem;
-      user-select: none;
+    /* Responsive */
+    @media (max-width: 500px) {
+      nav button {
+        font-size: 1rem;
+        padding: 0.8rem;
+      }
+      .coffee-card img {
+        max-width: 100px;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Electricity Bill Payment Dashboard</h1>
-  <p>Select a tab to Pay Bill or View Customers</p>
+  <h1>Coffee Shop Dashboard</h1>
+  <p>Browse our coffee menu and place your order</p>
 </header>
 
 <nav>
-  <button id="tabPay" class="active">Pay Bill</button>
-  <button id="tabView">View Customers</button>
+  <button id="tabMenu" class="active" aria-controls="menuSection" aria-selected="true" role="tab">Menu</button>
+  <button id="tabOrder" aria-controls="orderSection" aria-selected="false" role="tab">Order & Pay</button>
 </nav>
 
 <main>
-  <!-- Pay Bill Section -->
-  <section id="paySection">
-    <h2>Customer Details</h2>
-    <form id="paymentForm">
-      <label for="name">Full Name:</label>
-      <input type="text" id="name" required placeholder="Your full name" />
+  <!-- Menu Section -->
+  <section id="menuSection" role="tabpanel" tabindex="0">
+    <h2>Our Coffee Selection</h2>
+    <div class="coffee-list" id="coffeeList">
+      <!-- Coffee cards generated by JS -->
+    </div>
+  </section>
 
-      <label for="meter">Meter Number:</label>
-      <input type="text" id="meter" required placeholder="Your meter number" />
+  <!-- Order & Payment Section -->
+  <section id="orderSection" role="tabpanel" tabindex="0" style="display:none;">
+    <h2>Place Your Order</h2>
+    <form id="orderForm" aria-label="Coffee Order and Payment Form">
+      <label for="customerName">Full Name:</label>
+      <input type="text" id="customerName" name="customerName" required placeholder="Your full name" />
 
-      <label for="billAmount">Select Bill Amount:</label>
-      <select id="billAmount" required>
-        <option value="" disabled selected>-- Choose amount --</option>
-        <option value="25">$25 - Basic Plan</option>
-        <option value="50">$50 - Standard Plan</option>
-        <option value="75">$75 - Premium Plan</option>
-        <option value="100">$100 - Ultimate Plan</option>
+      <label for="customerEmail">Email Address:</label>
+      <input type="email" id="customerEmail" name="customerEmail" required placeholder="example@email.com" />
+
+      <label for="coffeeType">Select Coffee:</label>
+      <select id="coffeeType" name="coffeeType" required>
+        <option value="" disabled selected>-- Choose coffee --</option>
       </select>
 
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" name="quantity" min="1" value="1" required />
+
       <label for="paymentMethod">Payment Method:</label>
-      <select id="paymentMethod" required>
+      <select id="paymentMethod" name="paymentMethod" required>
         <option value="" disabled selected>-- Select payment method --</option>
         <option value="credit">Credit Card</option>
         <option value="paypal">PayPal</option>
-        <option value="bank">Bank Transfer</option>
+        <option value="cash">Cash</option>
       </select>
 
-      <button type="submit">Pay Bill</button>
+      <button type="submit">Pay Now</button>
     </form>
 
-    <div class="bill-summary" id="billSummary">
-      <h3>Payment Summary</h3>
-      <p><strong>Name:</strong> <span id="summaryName"></span></p>
-      <p><strong>Meter Number:</strong> <span id="summaryMeter"></span></p>
-      <p><strong>Bill Amount:</strong> $<span id="summaryAmount"></span></p>
-      <p><strong>Payment Method:</strong> <span id="summaryPayment"></span></p>
-    </div>
-
-    <div class="payment-success" id="paymentSuccess">
-      Payment successful! Thank you for your payment.
-    </div>
-  </section>
-
-  <!-- View Customers Section -->
-  <section id="viewSection" style="display:none;">
-    <h2>Customer Payment Details</h2>
-    <table id="customerTable" aria-label="Customer Payments Table">
-      <thead>
-        <tr>
-          <th>Full Name</th>
-          <th>Meter Number</th>
-          <th>Bill Amount ($)</th>
-          <th>Payment Method</th>
-          <th>Payment Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Rows inserted dynamically -->
-      </tbody>
-    </table>
-    <p class="no-data" id="noDataMsg" style="display:none;">No payment records found.</p>
+    <div class="summary" id="orderSummary" aria-live="polite"></div>
+    <div class="success-message" id="paymentSuccess" role="alert"></div>
   </section>
 </main>
 
-<footer>
-  &copy; 2025 Electricity Billing System. All rights reserved.
-</footer>
-
 <script>
-  // Tab Switching
-  const tabPay = document.getElementById('tabPay');
-  const tabView = document.getElementById('tabView');
-  const paySection = document.getElementById('paySection');
-  const viewSection = document.getElementById('viewSection');
+  // Coffee Data
+  const coffees = [
+    {
+      id: "espresso",
+      name: "Espresso",
+      description: "Strong and bold black coffee with a rich aroma.",
+      price: 3.0,
+      img: "https://cdn-icons-png.flaticon.com/512/271/271994.png"
+    },
+    {
+      id: "latte",
+      name: "Latte",
+      description: "Smooth blend of espresso and steamed milk.",
+      price: 4.5,
+      img: "https://cdn-icons-png.flaticon.com/512/983/983614.png"
+    },
+    {
+      id: "cappuccino",
+      name: "Cappuccino",
+      description: "Espresso topped with foamed milk for a creamy texture.",
+      price: 4.0,
+      img: "https://cdn-icons-png.flaticon.com/512/227/227258.png"
+    },
+    {
+      id: "americano",
+      name: "Americano",
+      description: "Espresso diluted with hot water for a lighter taste.",
+      price: 3.5,
+      img: "https://cdn-icons-png.flaticon.com/512/2222/2222710.png"
+    },
+    {
+      id: "mocha",
+      name: "Mocha",
+      description: "Chocolate-flavored variant of a latte.",
+      price: 5.0,
+      img: "https://cdn-icons-png.flaticon.com/512/135/135485.png"
+    }
+  ];
 
-  tabPay.addEventListener('click', () => {
-    tabPay.classList.add('active');
-    tabView.classList.remove('active');
-    paySection.style.display = '';
-    viewSection.style.display = 'none';
+  // Tab switching logic
+  const tabMenu = document.getElementById('tabMenu');
+  const tabOrder = document.getElementById('tabOrder');
+  const menuSection = document.getElementById('menuSection');
+  const orderSection = document.getElementById('orderSection');
+
+  tabMenu.addEventListener('click', () => {
+    tabMenu.classList.add('active');
+    tabMenu.setAttribute('aria-selected', 'true');
+    tabOrder.classList.remove('active');
+    tabOrder.setAttribute('aria-selected', 'false');
+    menuSection.style.display = '';
+    orderSection.style.display = 'none';
   });
 
-  tabView.addEventListener('click', () => {
-    tabView.classList.add('active');
-    tabPay.classList.remove('active');
-    paySection.style.display = 'none';
-    viewSection.style.display = '';
-    loadPaymentsTable();
+  tabOrder.addEventListener('click', () => {
+    tabOrder.classList.add('active');
+    tabOrder.setAttribute('aria-selected', 'true');
+    tabMenu.classList.remove('active');
+    tabMenu.setAttribute('aria-selected', 'false');
+    orderSection.style.display = '';
+    menuSection.style.display = 'none';
   });
 
-  // Payment Form Handling
-  const form = document.getElementById("paymentForm");
-  const billSummary = document.getElementById("billSummary");
-  const paymentSuccess = document.getElementById("paymentSuccess");
+  // Render coffee menu
+  const coffeeList = document.getElementById('coffeeList');
+  coffees.forEach(coffee => {
+    const card = document.createElement('div');
+    card.className = 'coffee-card';
+    card.innerHTML = `
+      <img src="${coffee.img}" alt="${coffee.name}" loading="lazy" />
+      <h3>${coffee.name}</h3>
+      <p>${coffee.description}</p>
+      <div class="price">$${coffee.price.toFixed(2)}</div>
+    `;
+    coffeeList.appendChild(card);
+  });
 
-  form.addEventListener("submit", function(e) {
+  // Populate coffee select in order form
+  const coffeeSelect = document.getElementById('coffeeType');
+  coffees.forEach(coffee => {
+    const option = document.createElement('option');
+    option.value = coffee.id;
+    option.textContent = `${coffee.name} - $${coffee.price.toFixed(2)}`;
+    coffeeSelect.appendChild(option);
+  });
+
+  // Handle form submission and payment
+  const orderForm = document.getElementById('orderForm');
+  const orderSummary = document.getElementById('orderSummary');
+  const paymentSuccess = document.getElementById('paymentSuccess');
+
+  orderForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Get form values
-    const name = document.getElementById("name").value.trim();
-    const meter = document.getElementById("meter").value.trim();
-    const billAmount = document.getElementById("billAmount").value;
-    const paymentMethodValue = document.getElementById("paymentMethod").value;
+    // Clear previous messages
+    orderSummary.style.display = 'none';
+    paymentSuccess.style.display = 'none';
+    orderSummary.innerHTML = '';
+    paymentSuccess.textContent = '';
 
-    if (!name || !meter || !billAmount || !paymentMethodValue) {
-      alert("Please fill out all fields.");
+    // Get form data
+    const name = orderForm.customerName.value.trim();
+    const email = orderForm.customerEmail.value.trim();
+    const coffeeId = orderForm.coffeeType.value;
+    const qty = parseInt(orderForm.quantity.value);
+    const paymentMethodVal = orderForm.paymentMethod.value;
+
+    if (!name || !email || !coffeeId || !qty || qty < 1 || !paymentMethodVal) {
+      alert('Please fill all fields correctly.');
       return;
     }
 
-    let paymentText = "";
-    switch(paymentMethodValue) {
-      case "credit":
-        paymentText = "Credit Card";
-        break;
-      case "paypal":
-        paymentText = "PayPal";
-        break;
-      case "bank":
-        paymentText = "Bank Transfer";
-        break;
+    const coffee = coffees.find(c => c.id === coffeeId);
+    if (!coffee) {
+      alert('Invalid coffee selection.');
+      return;
     }
 
-    // Update summary fields
-    document.getElementById("summaryName").textContent = name;
-    document.getElementById("summaryMeter").textContent = meter;
-    document.getElementById("summaryAmount").textContent = parseFloat(billAmount).toFixed(2);
-    document.getElementById("summaryPayment").textContent = paymentText;
+    const totalBill = coffee.price * qty;
 
-    // Show summary and hide success initially
-    billSummary.style.display = "block";
-    paymentSuccess.style.display = "none";
+    // Show summary
+    orderSummary.style.display = 'block';
+    orderSummary.innerHTML = `
+      <h3>Order Summary</h3>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Coffee:</strong> ${coffee.name}</p>
+      <p><strong>Quantity:</strong> ${qty}</p>
+      <p><strong>Total Bill:</strong> $${totalBill.toFixed(2)}</p>
+      <p><strong>Payment Method:</strong> ${getPaymentMethodText(paymentMethodVal)}</p>
+      <p>Processing your payment...</p>
+    `;
 
-    // Simulate payment processing delay
+    // Simulate payment delay
     setTimeout(() => {
-      // Save payment to localStorage
-      const storedPayments = JSON.parse(localStorage.getItem("electricityPayments")) || [];
-      storedPayments.push({
-        name: name,
-        meter: meter,
-        amount: billAmount,
-        paymentMethod: paymentText,
+      // Save order details in localStorage for future reference if you want
+      const orders = JSON.parse(localStorage.getItem('coffeeOrders')) || [];
+      orders.push({
+        name,
+        email,
+        coffee: coffee.name,
+        quantity: qty,
+        total: totalBill,
+        paymentMethod: getPaymentMethodText(paymentMethodVal),
         date: new Date().toISOString()
       });
-      localStorage.setItem("electricityPayments", JSON.stringify(storedPayments));
+      localStorage.setItem('coffeeOrders', JSON.stringify(orders));
 
-      paymentSuccess.style.display = "block";
-      form.reset();
-    }, 1500);
+      // Show success message
+      orderSummary.style.display = 'none';
+      paymentSuccess.style.display = 'block';
+      paymentSuccess.textContent = `Thank you, ${name}! Your payment of $${totalBill.toFixed(2)} was successful. Enjoy your ${coffee.name}!`;
+
+      // Reset form
+      orderForm.reset();
+    }, 1800);
   });
 
-  // Load payments into table
-  function loadPaymentsTable() {
-    const payments = JSON.parse(localStorage.getItem("electricityPayments")) || [];
-    const tbody = document.querySelector("#customerTable tbody");
-    const noDataMsg = document.getElementById("noDataMsg");
-
-    tbody.innerHTML = "";
-
-    if (payments.length === 0) {
-      noDataMsg.style.display = "block";
-      document.getElementById("customerTable").style.display = "none";
-      return;
-    } else {
-      noDataMsg.style.display = "none";
-      document.getElementById("customerTable").style.display = "";
+  function getPaymentMethodText(val) {
+    switch(val) {
+      case 'credit': return 'Credit Card';
+      case 'paypal': return 'PayPal';
+      case 'cash': return 'Cash';
+      default: return val;
     }
-
-    payments.forEach(payment => {
-      const tr = document.createElement("tr");
-
-      tr.innerHTML = `
-        <td>${payment.name}</td>
-        <td>${payment.meter}</td>
-        <td>${parseFloat(payment.amount).toFixed(2)}</td>
-        <td>${payment.paymentMethod}</td>
-        <td>${new Date(payment.date).toLocaleString()}</td>
-      `;
-
-      tbody.appendChild(tr);
-    });
   }
 </script>
 
