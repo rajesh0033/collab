@@ -3,191 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fast Food Info Dashboard</title>
+  <title>Electricity Bill Payment Dashboard</title>
   <style>
     * {
       box-sizing: border-box;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f9fc;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f5f9;
       margin: 0;
       padding: 0;
     }
 
     header {
-      background-color: #e63946;
+      background-color: #1d3557;
       color: white;
-      padding: 1rem 2rem;
+      padding: 1.5rem;
       text-align: center;
     }
 
-    .search-bar {
-      max-width: 400px;
-      margin: 1rem auto;
-      display: flex;
-      justify-content: center;
-    }
-
-    .search-bar input {
-      padding: 0.5rem 1rem;
-      width: 100%;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
     .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      justify-content: center;
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
       padding: 2rem;
-    }
-
-    .card {
-      background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 300px;
-      overflow: hidden;
-      transition: transform 0.2s;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .card-body {
-      padding: 1rem;
-    }
-
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: bold;
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
       color: #333;
-      margin-bottom: 0.5rem;
     }
 
-    .card-text {
-      font-size: 0.95rem;
-      color: #555;
-      margin-bottom: 0.5rem;
-    }
-
-    .price {
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
       font-weight: bold;
-      color: #e63946;
     }
 
-    @media (max-width: 600px) {
-      .container {
-        flex-direction: column;
-        align-items: center;
-      }
+    input {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #457b9d;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1d3557;
+    }
+
+    .bill-output {
+      margin-top: 2rem;
+      background-color: #f0f0f0;
+      padding: 1.5rem;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .bill-output h3 {
+      margin-top: 0;
+      color: #2a2a2a;
+    }
+
+    .bill-output p {
+      margin: 0.3rem 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #666;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Fast Food Dashboard</h1>
-    <p>Browse popular fast foods and their nutritional info</p>
+    <h1>Electricity Bill Payment Dashboard</h1>
+    <p>Calculate and view your monthly electricity bill</p>
   </header>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search fast food...">
+  <div class="container">
+    <h2>Enter Your Details</h2>
+    <form id="billForm">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="meter">Meter Number:</label>
+      <input type="text" id="meter" required>
+
+      <label for="units">Units Consumed (kWh):</label>
+      <input type="number" id="units" required min="0">
+
+      <button type="submit">Calculate Bill</button>
+    </form>
+
+    <div class="bill-output" id="billOutput">
+      <h3>Bill Summary</h3>
+      <p><strong>Name:</strong> <span id="outName"></span></p>
+      <p><strong>Meter Number:</strong> <span id="outMeter"></span></p>
+      <p><strong>Units Used:</strong> <span id="outUnits"></span> kWh</p>
+      <p><strong>Rate per Unit:</strong> $<span id="outRate"></span></p>
+      <p><strong>Total Amount:</strong> $<span id="outTotal"></span></p>
+    </div>
   </div>
 
-  <div class="container" id="foodContainer">
-    <!-- Cards will be inserted here by JavaScript -->
-  </div>
+  <footer>
+    &copy; 2025 Electricity Billing System. All rights reserved.
+  </footer>
 
   <script>
-    const foodData = [
-      {
-        name: "Cheeseburger",
-        calories: 303,
-        ingredients: "Beef, Cheese, Lettuce, Tomato, Bun",
-        price: "$5.99",
-        image: "https://source.unsplash.com/300x200/?cheeseburger"
-      },
-      {
-        name: "Pepperoni Pizza",
-        calories: 285,
-        ingredients: "Dough, Cheese, Tomato Sauce, Pepperoni",
-        price: "$8.49",
-        image: "https://source.unsplash.com/300x200/?pepperoni-pizza"
-      },
-      {
-        name: "Fried Chicken",
-        calories: 320,
-        ingredients: "Chicken, Flour, Spices, Oil",
-        price: "$6.99",
-        image: "https://source.unsplash.com/300x200/?fried-chicken"
-      },
-      {
-        name: "French Fries",
-        calories: 365,
-        ingredients: "Potatoes, Salt, Oil",
-        price: "$2.99",
-        image: "https://source.unsplash.com/300x200/?french-fries"
-      },
-      {
-        name: "Taco",
-        calories: 170,
-        ingredients: "Tortilla, Beef, Lettuce, Cheese, Salsa",
-        price: "$3.49",
-        image: "https://source.unsplash.com/300x200/?taco"
-      },
-      {
-        name: "Hot Dog",
-        calories: 290,
-        ingredients: "Bun, Sausage, Mustard, Ketchup",
-        price: "$4.25",
-        image: "https://source.unsplash.com/300x200/?hot-dog"
+    const form = document.getElementById("billForm");
+    const output = document.getElementById("billOutput");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const meter = document.getElementById("meter").value;
+      const units = parseFloat(document.getElementById("units").value);
+
+      let rate = 0;
+
+      // Tiered rates (example)
+      if (units <= 100) {
+        rate = 0.5;
+      } else if (units <= 300) {
+        rate = 0.75;
+      } else {
+        rate = 1.0;
       }
-    ];
 
-    const container = document.getElementById("foodContainer");
-    const searchInput = document.getElementById("searchInput");
+      const total = (units * rate).toFixed(2);
 
-    function displayFoods(foods) {
-      container.innerHTML = "";
-      foods.forEach(food => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${food.image}" alt="${food.name}">
-          <div class="card-body">
-            <div class="card-title">${food.name}</div>
-            <div class="card-text"><strong>Calories:</strong> ${food.calories}</div>
-            <div class="card-text"><strong>Ingredients:</strong> ${food.ingredients}</div>
-            <div class="card-text price">${food.price}</div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+      // Update output
+      document.getElementById("outName").textContent = name;
+      document.getElementById("outMeter").textContent = meter;
+      document.getElementById("outUnits").textContent = units;
+      document.getElementById("outRate").textContent = rate.toFixed(2);
+      document.getElementById("outTotal").textContent = total;
 
-    searchInput.addEventListener("input", () => {
-      const value = searchInput.value.toLowerCase();
-      const filtered = foodData.filter(food =>
-        food.name.toLowerCase().includes(value) ||
-        food.ingredients.toLowerCase().includes(value)
-      );
-      displayFoods(filtered);
+      output.style.display = "block";
     });
-
-    // Initial display
-    displayFoods(foodData);
   </script>
 
 </body>
