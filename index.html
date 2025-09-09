@@ -3,76 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>View Customer Payment Details</title>
+  <title>Electricity Bill Dashboard</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f1f5f9;
       margin: 0;
-      padding: 2rem;
+      padding: 0;
     }
-
     header {
       background-color: #1d3557;
       color: white;
-      padding: 1rem;
+      padding: 1.5rem;
       text-align: center;
-      border-radius: 8px;
-      margin-bottom: 2rem;
+      user-select: none;
     }
-
     h1 {
       margin: 0;
     }
-
-    table {
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #457b9d;
+    }
+    nav button {
+      flex: 1;
+      padding: 1rem;
+      background: #457b9d;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: 600;
+    }
+    nav button:hover {
+      background-color: #1d3557;
+    }
+    nav button.active {
+      background-color: #1d3557;
+    }
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    form label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #222;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      background-color: #fff;
+    }
+    form button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #457b9d;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #1d3557;
+    }
+    .bill-summary, .payment-success {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 10px;
+      display: none;
+    }
+    .bill-summary {
+      background-color: #f0f0f0;
+    }
+    .bill-summary h3 {
+      margin-top: 0;
+      color: #2a2a2a;
+    }
+    .bill-summary p {
+      margin: 0.3rem 0;
+    }
+    .payment-success {
+      background-color: #d4edda;
+      color: #155724;
+      font-weight: 600;
+      text-align: center;
+    }
+    /* Customer table styles */
+    #customerTable {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background-color: white;
     }
-
-    th, td {
+    #customerTable th, #customerTable td {
       padding: 12px 15px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
-
-    th {
+    #customerTable th {
       background-color: #457b9d;
       color: white;
       font-weight: 600;
     }
-
-    tr:hover {
+    #customerTable tr:hover {
       background-color: #f0f8ff;
     }
-
     .no-data {
       text-align: center;
       margin-top: 2rem;
       font-size: 1.2rem;
       color: #666;
     }
-
     footer {
       text-align: center;
-      margin-top: 3rem;
-      color: #666;
+      padding: 1rem;
       font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+      user-select: none;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Customer Payment Details</h1>
-  </header>
+<header>
+  <h1>Electricity Bill Payment Dashboard</h1>
+  <p>Select a tab to Pay Bill or View Customers</p>
+</header>
 
-  <main>
-    <table id="customerTable">
+<nav>
+  <button id="tabPay" class="active">Pay Bill</button>
+  <button id="tabView">View Customers</button>
+</nav>
+
+<main>
+  <!-- Pay Bill Section -->
+  <section id="paySection">
+    <h2>Customer Details</h2>
+    <form id="paymentForm">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" required placeholder="Your full name" />
+
+      <label for="meter">Meter Number:</label>
+      <input type="text" id="meter" required placeholder="Your meter number" />
+
+      <label for="billAmount">Select Bill Amount:</label>
+      <select id="billAmount" required>
+        <option value="" disabled selected>-- Choose amount --</option>
+        <option value="25">$25 - Basic Plan</option>
+        <option value="50">$50 - Standard Plan</option>
+        <option value="75">$75 - Premium Plan</option>
+        <option value="100">$100 - Ultimate Plan</option>
+      </select>
+
+      <label for="paymentMethod">Payment Method:</label>
+      <select id="paymentMethod" required>
+        <option value="" disabled selected>-- Select payment method --</option>
+        <option value="credit">Credit Card</option>
+        <option value="paypal">PayPal</option>
+        <option value="bank">Bank Transfer</option>
+      </select>
+
+      <button type="submit">Pay Bill</button>
+    </form>
+
+    <div class="bill-summary" id="billSummary">
+      <h3>Payment Summary</h3>
+      <p><strong>Name:</strong> <span id="summaryName"></span></p>
+      <p><strong>Meter Number:</strong> <span id="summaryMeter"></span></p>
+      <p><strong>Bill Amount:</strong> $<span id="summaryAmount"></span></p>
+      <p><strong>Payment Method:</strong> <span id="summaryPayment"></span></p>
+    </div>
+
+    <div class="payment-success" id="paymentSuccess">
+      Payment successful! Thank you for your payment.
+    </div>
+  </section>
+
+  <!-- View Customers Section -->
+  <section id="viewSection" style="display:none;">
+    <h2>Customer Payment Details</h2>
+    <table id="customerTable" aria-label="Customer Payments Table">
       <thead>
         <tr>
           <th>Full Name</th>
@@ -83,41 +213,131 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Rows added dynamically -->
+        <!-- Rows inserted dynamically -->
       </tbody>
     </table>
-
     <p class="no-data" id="noDataMsg" style="display:none;">No payment records found.</p>
-  </main>
+  </section>
+</main>
 
-  <footer>
-    &copy; 2025 Electricity Billing System
-  </footer>
+<footer>
+  &copy; 2025 Electricity Billing System. All rights reserved.
+</footer>
 
-  <script>
-    const customerTableBody = document.querySelector("#customerTable tbody");
+<script>
+  // Tab Switching
+  const tabPay = document.getElementById('tabPay');
+  const tabView = document.getElementById('tabView');
+  const paySection = document.getElementById('paySection');
+  const viewSection = document.getElementById('viewSection');
+
+  tabPay.addEventListener('click', () => {
+    tabPay.classList.add('active');
+    tabView.classList.remove('active');
+    paySection.style.display = '';
+    viewSection.style.display = 'none';
+  });
+
+  tabView.addEventListener('click', () => {
+    tabView.classList.add('active');
+    tabPay.classList.remove('active');
+    paySection.style.display = 'none';
+    viewSection.style.display = '';
+    loadPaymentsTable();
+  });
+
+  // Payment Form Handling
+  const form = document.getElementById("paymentForm");
+  const billSummary = document.getElementById("billSummary");
+  const paymentSuccess = document.getElementById("paymentSuccess");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Get form values
+    const name = document.getElementById("name").value.trim();
+    const meter = document.getElementById("meter").value.trim();
+    const billAmount = document.getElementById("billAmount").value;
+    const paymentMethodValue = document.getElementById("paymentMethod").value;
+
+    if (!name || !meter || !billAmount || !paymentMethodValue) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    let paymentText = "";
+    switch(paymentMethodValue) {
+      case "credit":
+        paymentText = "Credit Card";
+        break;
+      case "paypal":
+        paymentText = "PayPal";
+        break;
+      case "bank":
+        paymentText = "Bank Transfer";
+        break;
+    }
+
+    // Update summary fields
+    document.getElementById("summaryName").textContent = name;
+    document.getElementById("summaryMeter").textContent = meter;
+    document.getElementById("summaryAmount").textContent = parseFloat(billAmount).toFixed(2);
+    document.getElementById("summaryPayment").textContent = paymentText;
+
+    // Show summary and hide success initially
+    billSummary.style.display = "block";
+    paymentSuccess.style.display = "none";
+
+    // Simulate payment processing delay
+    setTimeout(() => {
+      // Save payment to localStorage
+      const storedPayments = JSON.parse(localStorage.getItem("electricityPayments")) || [];
+      storedPayments.push({
+        name: name,
+        meter: meter,
+        amount: billAmount,
+        paymentMethod: paymentText,
+        date: new Date().toISOString()
+      });
+      localStorage.setItem("electricityPayments", JSON.stringify(storedPayments));
+
+      paymentSuccess.style.display = "block";
+      form.reset();
+    }, 1500);
+  });
+
+  // Load payments into table
+  function loadPaymentsTable() {
+    const payments = JSON.parse(localStorage.getItem("electricityPayments")) || [];
+    const tbody = document.querySelector("#customerTable tbody");
     const noDataMsg = document.getElementById("noDataMsg");
 
-    // Load payments from localStorage
-    const payments = JSON.parse(localStorage.getItem("electricityPayments")) || [];
+    tbody.innerHTML = "";
 
     if (payments.length === 0) {
       noDataMsg.style.display = "block";
+      document.getElementById("customerTable").style.display = "none";
+      return;
     } else {
-      payments.forEach(payment => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-          <td>${payment.name}</td>
-          <td>${payment.meter}</td>
-          <td>${parseFloat(payment.amount).toFixed(2)}</td>
-          <td>${payment.paymentMethod}</td>
-          <td>${new Date(payment.date).toLocaleString()}</td>
-        `;
-
-        customerTableBody.appendChild(tr);
-      });
+      noDataMsg.style.display = "none";
+      document.getElementById("customerTable").style.display = "";
     }
-  </script>
+
+    payments.forEach(payment => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${payment.name}</td>
+        <td>${payment.meter}</td>
+        <td>${parseFloat(payment.amount).toFixed(2)}</td>
+        <td>${payment.paymentMethod}</td>
+        <td>${new Date(payment.date).toLocaleString()}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  }
+</script>
+
 </body>
 </html>
