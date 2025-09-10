@@ -1,392 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coffee Shop Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Company Profit & Loss Dashboard</title>
   <style>
-    /* Reset and base */
     * {
       box-sizing: border-box;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0; padding: 0;
-      background: #f5f3f0;
-      color: #3e3e3e;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      background: #6f4e37;
-      color: white;
-      text-align: center;
-      padding: 1.5rem;
-      user-select: none;
-    }
-    header h1 {
       margin: 0;
-      font-weight: 700;
-      font-size: 2rem;
+      padding: 0;
     }
-    nav {
-      display: flex;
-      background: #a67c52;
-      user-select: none;
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      padding: 20px;
+      color: #333;
     }
-    nav button {
-      flex: 1;
-      background: #a67c52;
-      border: none;
-      padding: 1rem;
-      font-size: 1.1rem;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-weight: 600;
-    }
-    nav button:hover {
-      background: #6f4e37;
-    }
-    nav button.active {
-      background: #4b3521;
-    }
-    main {
+
+    .dashboard {
       max-width: 900px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      flex-grow: 1;
+      margin: auto;
     }
-    /* Coffee Menu */
-    .coffee-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-      gap: 1.5rem;
-    }
-    .coffee-card {
-      background: #fef9f4;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+
+    h1 {
       text-align: center;
+      margin-bottom: 30px;
     }
-    .coffee-card img {
-      max-width: 120px;
-      border-radius: 50%;
-      margin-bottom: 1rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    }
-    .coffee-card h3 {
-      margin: 0.3rem 0;
-      font-weight: 700;
-      color: #4b3521;
-    }
-    .coffee-card p {
-      margin: 0.3rem 0 0.7rem;
-      font-size: 0.9rem;
-      color: #6f4e37;
-    }
-    .coffee-card .price {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #855e42;
-    }
-    /* Order Form */
-    form label {
-      display: block;
-      margin: 0.7rem 0 0.3rem;
-      font-weight: 600;
-    }
-    form input[type="text"],
-    form input[type="email"],
-    form select,
-    form input[type="number"] {
-      width: 100%;
-      padding: 0.6rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    form input[type="number"] {
-      max-width: 80px;
-    }
-    form button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 0.8rem;
-      font-size: 1.1rem;
-      background-color: #6f4e37;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: background-color 0.3s ease;
-    }
-    form button:hover {
-      background-color: #4b3521;
-    }
-    .summary, .success-message {
-      margin-top: 2rem;
-      padding: 1.3rem;
-      border-radius: 10px;
-      display: none;
-    }
+
     .summary {
-      background: #f0ead8;
-      color: #4b3521;
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 1.2rem;
     }
-    .summary h3 {
-      margin-top: 0;
+
+    .summary span {
+      font-weight: bold;
     }
-    .success-message {
-      background: #d4edda;
-      color: #155724;
-      font-weight: 700;
-      text-align: center;
-    }
-    /* Responsive */
-    @media (max-width: 500px) {
-      nav button {
-        font-size: 1rem;
-        padding: 0.8rem;
-      }
-      .coffee-card img {
-        max-width: 100px;
-      }
+
+    .chart-section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
+  <div class="dashboard">
+    <h1>Company Profit & Loss Dashboard</h1>
 
-<header>
-  <h1>Coffee Shop Dashboard</h1>
-  <p>Browse our coffee menu and place your order</p>
-</header>
-
-<nav>
-  <button id="tabMenu" class="active" aria-controls="menuSection" aria-selected="true" role="tab">Menu</button>
-  <button id="tabOrder" aria-controls="orderSection" aria-selected="false" role="tab">Order & Pay</button>
-</nav>
-
-<main>
-  <!-- Menu Section -->
-  <section id="menuSection" role="tabpanel" tabindex="0">
-    <h2>Our Coffee Selection</h2>
-    <div class="coffee-list" id="coffeeList">
-      <!-- Coffee cards generated by JS -->
+    <div class="summary">
+      <div>Total Profit: <span id="total-profit">$0</span></div>
+      <div>Total Loss: <span id="total-loss">$0</span></div>
     </div>
-  </section>
 
-  <!-- Order & Payment Section -->
-  <section id="orderSection" role="tabpanel" tabindex="0" style="display:none;">
-    <h2>Place Your Order</h2>
-    <form id="orderForm" aria-label="Coffee Order and Payment Form">
-      <label for="customerName">Full Name:</label>
-      <input type="text" id="customerName" name="customerName" required placeholder="Your full name" />
+    <div class="chart-section">
+      <canvas id="profitLossChart"></canvas>
+    </div>
+  </div>
 
-      <label for="customerEmail">Email Address:</label>
-      <input type="email" id="customerEmail" name="customerEmail" required placeholder="example@email.com" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-      <label for="coffeeType">Select Coffee:</label>
-      <select id="coffeeType" name="coffeeType" required>
-        <option value="" disabled selected>-- Choose coffee --</option>
-      </select>
+  <script>
+    const financialData = [
+      { month: 'Jan', value: 5000 },
+      { month: 'Feb', value: -2000 },
+      { month: 'Mar', value: 3000 },
+      { month: 'Apr', value: -1000 },
+      { month: 'May', value: 4500 },
+      { month: 'Jun', value: -1200 },
+      { month: 'Jul', value: 3500 },
+      { month: 'Aug', value: -800 },
+      { month: 'Sep', value: 6000 },
+      { month: 'Oct', value: -2500 },
+      { month: 'Nov', value: 4000 },
+      { month: 'Dec', value: -900 }
+    ];
 
-      <label for="quantity">Quantity:</label>
-      <input type="number" id="quantity" name="quantity" min="1" value="1" required />
+    let totalProfit = 0;
+    let totalLoss = 0;
 
-      <label for="paymentMethod">Payment Method:</label>
-      <select id="paymentMethod" name="paymentMethod" required>
-        <option value="" disabled selected>-- Select payment method --</option>
-        <option value="credit">Credit Card</option>
-        <option value="paypal">PayPal</option>
-        <option value="cash">Cash</option>
-      </select>
+    financialData.forEach(item => {
+      if (item.value >= 0) {
+        totalProfit += item.value;
+      } else {
+        totalLoss += Math.abs(item.value);
+      }
+    });
 
-      <button type="submit">Pay Now</button>
-    </form>
+    document.getElementById('total-profit').textContent = `$${totalProfit.toLocaleString()}`;
+    document.getElementById('total-loss').textContent = `$${totalLoss.toLocaleString()}`;
 
-    <div class="summary" id="orderSummary" aria-live="polite"></div>
-    <div class="success-message" id="paymentSuccess" role="alert"></div>
-  </section>
-</main>
-
-<script>
-  // Coffee Data
-  const coffees = [
-    {
-      id: "espresso",
-      name: "Espresso",
-      description: "Strong and bold black coffee with a rich aroma.",
-      price: 3.0,
-      img: "https://cdn-icons-png.flaticon.com/512/271/271994.png"
-    },
-    {
-      id: "latte",
-      name: "Latte",
-      description: "Smooth blend of espresso and steamed milk.",
-      price: 4.5,
-      img: "https://cdn-icons-png.flaticon.com/512/983/983614.png"
-    },
-    {
-      id: "cappuccino",
-      name: "Cappuccino",
-      description: "Espresso topped with foamed milk for a creamy texture.",
-      price: 4.0,
-      img: "https://cdn-icons-png.flaticon.com/512/227/227258.png"
-    },
-    {
-      id: "americano",
-      name: "Americano",
-      description: "Espresso diluted with hot water for a lighter taste.",
-      price: 3.5,
-      img: "https://cdn-icons-png.flaticon.com/512/2222/2222710.png"
-    },
-    {
-      id: "mocha",
-      name: "Mocha",
-      description: "Chocolate-flavored variant of a latte.",
-      price: 5.0,
-      img: "https://cdn-icons-png.flaticon.com/512/135/135485.png"
-    }
-  ];
-
-  // Tab switching logic
-  const tabMenu = document.getElementById('tabMenu');
-  const tabOrder = document.getElementById('tabOrder');
-  const menuSection = document.getElementById('menuSection');
-  const orderSection = document.getElementById('orderSection');
-
-  tabMenu.addEventListener('click', () => {
-    tabMenu.classList.add('active');
-    tabMenu.setAttribute('aria-selected', 'true');
-    tabOrder.classList.remove('active');
-    tabOrder.setAttribute('aria-selected', 'false');
-    menuSection.style.display = '';
-    orderSection.style.display = 'none';
-  });
-
-  tabOrder.addEventListener('click', () => {
-    tabOrder.classList.add('active');
-    tabOrder.setAttribute('aria-selected', 'true');
-    tabMenu.classList.remove('active');
-    tabMenu.setAttribute('aria-selected', 'false');
-    orderSection.style.display = '';
-    menuSection.style.display = 'none';
-  });
-
-  // Render coffee menu
-  const coffeeList = document.getElementById('coffeeList');
-  coffees.forEach(coffee => {
-    const card = document.createElement('div');
-    card.className = 'coffee-card';
-    card.innerHTML = `
-      <img src="${coffee.img}" alt="${coffee.name}" loading="lazy" />
-      <h3>${coffee.name}</h3>
-      <p>${coffee.description}</p>
-      <div class="price">$${coffee.price.toFixed(2)}</div>
-    `;
-    coffeeList.appendChild(card);
-  });
-
-  // Populate coffee select in order form
-  const coffeeSelect = document.getElementById('coffeeType');
-  coffees.forEach(coffee => {
-    const option = document.createElement('option');
-    option.value = coffee.id;
-    option.textContent = `${coffee.name} - $${coffee.price.toFixed(2)}`;
-    coffeeSelect.appendChild(option);
-  });
-
-  // Handle form submission and payment
-  const orderForm = document.getElementById('orderForm');
-  const orderSummary = document.getElementById('orderSummary');
-  const paymentSuccess = document.getElementById('paymentSuccess');
-
-  orderForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    // Clear previous messages
-    orderSummary.style.display = 'none';
-    paymentSuccess.style.display = 'none';
-    orderSummary.innerHTML = '';
-    paymentSuccess.textContent = '';
-
-    // Get form data
-    const name = orderForm.customerName.value.trim();
-    const email = orderForm.customerEmail.value.trim();
-    const coffeeId = orderForm.coffeeType.value;
-    const qty = parseInt(orderForm.quantity.value);
-    const paymentMethodVal = orderForm.paymentMethod.value;
-
-    if (!name || !email || !coffeeId || !qty || qty < 1 || !paymentMethodVal) {
-      alert('Please fill all fields correctly.');
-      return;
-    }
-
-    const coffee = coffees.find(c => c.id === coffeeId);
-    if (!coffee) {
-      alert('Invalid coffee selection.');
-      return;
-    }
-
-    const totalBill = coffee.price * qty;
-
-    // Show summary
-    orderSummary.style.display = 'block';
-    orderSummary.innerHTML = `
-      <h3>Order Summary</h3>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Coffee:</strong> ${coffee.name}</p>
-      <p><strong>Quantity:</strong> ${qty}</p>
-      <p><strong>Total Bill:</strong> $${totalBill.toFixed(2)}</p>
-      <p><strong>Payment Method:</strong> ${getPaymentMethodText(paymentMethodVal)}</p>
-      <p>Processing your payment...</p>
-    `;
-
-    // Simulate payment delay
-    setTimeout(() => {
-      // Save order details in localStorage for future reference if you want
-      const orders = JSON.parse(localStorage.getItem('coffeeOrders')) || [];
-      orders.push({
-        name,
-        email,
-        coffee: coffee.name,
-        quantity: qty,
-        total: totalBill,
-        paymentMethod: getPaymentMethodText(paymentMethodVal),
-        date: new Date().toISOString()
-      });
-      localStorage.setItem('coffeeOrders', JSON.stringify(orders));
-
-      // Show success message
-      orderSummary.style.display = 'none';
-      paymentSuccess.style.display = 'block';
-      paymentSuccess.textContent = `Thank you, ${name}! Your payment of $${totalBill.toFixed(2)} was successful. Enjoy your ${coffee.name}!`;
-
-      // Reset form
-      orderForm.reset();
-    }, 1800);
-  });
-
-  function getPaymentMethodText(val) {
-    switch(val) {
-      case 'credit': return 'Credit Card';
-      case 'paypal': return 'PayPal';
-      case 'cash': return 'Cash';
-      default: return val;
-    }
-  }
-</script>
-
+    const ctx = document.getElementById('profitLossChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: financialData.map(item => item.month),
+        datasets: [{
+          label: 'Profit / Loss',
+          data: financialData.map(item => item.value),
+          backgroundColor: financialData.map(item =>
+            item.value >= 0 ? 'rgba(0, 200, 83, 0.7)' : 'rgba(255, 82, 82, 0.7)'
+          ),
+          borderColor: financialData.map(item =>
+            item.value >= 0 ? 'rgba(0, 200, 83, 1)' : 'rgba(255, 82, 82, 1)'
+          ),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'USD ($)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = context.raw;
+                return value >= 0 ? `Profit: $${value}` : `Loss: $${Math.abs(value)}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
